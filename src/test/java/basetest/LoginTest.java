@@ -3,11 +3,12 @@ package basetest;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import pages.HomePage;
 import pages.LoginPage;
 
 
 public class LoginTest extends BaseTests {
+
+    boolean myScreenshotCapture() { return true; }
 
     @Test(priority = 1,dataProvider = "LoginData")
     public void addUserTest(boolean SuccessLgn,String uName, String pWord){
@@ -16,6 +17,7 @@ public class LoginTest extends BaseTests {
         Assert.assertTrue(SuccessLgn,addUserTest.getLoginMsg());
         addUserTest.enterUserName(uName);
         addUserTest.enterPassword(pWord);
+        manualScreenshotTaken();
         addUserTest.clickLoginButton();
     }
 

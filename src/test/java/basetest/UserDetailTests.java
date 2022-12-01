@@ -1,18 +1,15 @@
 package basetest;
 
-import org.openqa.selenium.TakesScreenshot;
+
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pages.ConfirmationPage;
-import pages.HomePage;
-import pages.LoginPage;
 import pages.UserDetailPage;
 
-import java.io.File;
-
-
 public class UserDetailTests extends BaseTests {
+
+    boolean myScreenshotCapture() { return true; }
 
     @Test(priority = 2,dataProvider = "AddUserData")
     public void userDetailTest(Boolean SuccessApp,String Facility,Boolean Hospital,Integer ValueOfRadioButton,String DateSet,String UserComment){
@@ -30,6 +27,7 @@ public class UserDetailTests extends BaseTests {
         Assert.assertEquals(Facility,getMsg.getFacilityMsg());
         Assert.assertEquals(DateSet,getMsg.getVisitDateMsg());
         Assert.assertEquals(UserComment,getMsg.getCommentMsg());
+        manualScreenshotTaken();
         homePage.clickRetHomeBtn();
     }
 

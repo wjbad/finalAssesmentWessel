@@ -1,6 +1,6 @@
 package basetest;
 
-import net.bytebuddy.asm.Advice;
+
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -12,12 +12,25 @@ import org.testng.annotations.*;
 import pages.HomePage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-public class BaseTests {
+public abstract class BaseTests {
 
     protected static WebDriver driver;
     protected HomePage homePage;
 
+    private String screenMethod = null;
+
+    abstract boolean myScreenshotCapture();
+
+    @BeforeMethod
+    public void getTestName(Method method) {
+        screenMethod = method.getName();
+    }
 
     @BeforeSuite
     public void setup() {
@@ -49,24 +62,29 @@ public class BaseTests {
             try {
                 FileHandler.copy(source, destination);
             } catch (IOException e) {
-                e.printStackTrace();
-
+                throw new RuntimeException(e);
             }
-        } else {
+        }
 
-            TakesScreenshot screenshot = (TakesScreenshot) driver; //create a screenshot
-            File source = screenshot.getScreenshotAs(OutputType.FILE); // specify the output type
+    }
+    //Before the AfterMethod is executed a screenshot is taken
+    protected void manualScreenshotTaken() {
+
+            TakesScreenshot screenshot = (TakesScreenshot) driver;
+            File source = screenshot.getScreenshotAs(OutputType.FILE);
+            Date today = Calendar.getInstance().getTime();
+            DateFormat dateFormat = new SimpleDateFormat("HH.mm.ss.SSS");
             File destination = new File(System.getProperty("user.dir") +
-                    "/resources/screenshot/Passed/" + testResult.getName() + "_" + testResult.getStartMillis() + ".png");
+                    "/resources/screenshot/Passed/" + screenMethod + "_" + dateFormat.format(today) + ".png");
 
             try {
-                FileHandler.copy(source, destination);// error will printout if file or source is not reached
+                FileHandler.copy(source, destination);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
-
         }
-    }
+
+
     @AfterSuite
     public void tearDown() {
       driver.quit();
